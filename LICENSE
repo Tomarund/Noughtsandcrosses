@@ -1,3 +1,447 @@
+namespace Noughts_and_crosses
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            // Objective 1
+            string filingname = "";
+            Console.WriteLine("Hello, player 1! What's your name?");
+            string p1name = Console.ReadLine();
+            Console.WriteLine("Hello, player 2! What's your name?");
+            string p2name = Console.ReadLine();
+            Console.WriteLine("Hello {0} and {1}, I am the Noughts and Crosses program", p1name, p2name);
+
+            // Objective 11 - savable games
+            char[,] savablegame = new char[3, 3];
+            // Objective 2
+            TheGame(p1name, p2name, ref savablegame, ref filingname);
+        }
+        public static void PlayGame(ref string p1name, ref string p2name, ref char[,] savablegame)
+        {
+            Console.WriteLine("You are now in the state of PlayGame");
+            int xoro = 0;
+            char p1play = ' ';
+            char p2play = ' ';
+            PickSymbols(ref xoro, ref p1name, ref p2name, ref p1play, ref p2play);
+            Console.WriteLine("{0} is using {1} and {2} is using {3}", p1name, p1play, p2name, p2play);
+
+            // Objective 5
+            char[,] noughtandcrossesarray = new char[3, 3];
+            for (int i = 0;i < 3;i++)
+            {
+                for (int j = 0;j < 3; j++)
+                {
+                    noughtandcrossesarray[i, j] = ' ';
+                }
+            }
+
+            // Objective 6
+            UpdateGameGrid(ref noughtandcrossesarray);
+            // objective 7
+            bool withinplay = true;
+            while (withinplay == true)
+            {
+                // Player 1 turn
+                Console.WriteLine("\n{0}, it's your turn!", p1name);
+                PlaceSymbol(p1play, ref noughtandcrossesarray);
+                UpdateGameGrid(ref noughtandcrossesarray);
+
+                // Objective 10 - Checking for a win
+                Checkwin(ref noughtandcrossesarray, p1play, p1name, ref withinplay);
+                if (withinplay == false)
+                {
+                    savablegame = noughtandcrossesarray;
+                    break;
+                }
+
+                //Objective 9 -checkfull
+                bool full = false;
+                int fullcount = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (noughtandcrossesarray[i, j] == 'X' || noughtandcrossesarray[i, j] == 'O')
+                        {
+                            fullcount++;
+                        }
+                    }
+                }
+                if (fullcount == 9)
+                {
+                    Console.WriteLine("The game is a draw");
+                    withinplay = false;
+                    if (withinplay == false)
+                    {
+                        savablegame = noughtandcrossesarray;
+                        break;
+                    }
+                }
+                else
+                {
+                    fullcount = 0;
+                }
+
+
+                // Player 2 turn
+                Console.WriteLine("\n{0}, it's your turn!", p2name);
+                PlaceSymbol(p2play, ref noughtandcrossesarray);
+                UpdateGameGrid(ref noughtandcrossesarray);
+
+                //Objective 10 - checking for a win
+                Checkwin(ref noughtandcrossesarray, p2play, p2name, ref withinplay);
+                if (withinplay == false)
+                {
+                    savablegame = noughtandcrossesarray;
+                    break;
+                }
+
+                //objective 9 - checkfull
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (noughtandcrossesarray[i, j] == 'X' || noughtandcrossesarray[i, j] == 'O')
+                        {
+                            fullcount++;
+                        }
+                    }
+                }
+                if (fullcount == 9)
+                {
+                    Console.WriteLine("The game is a draw");
+                    withinplay = false;
+                    if (withinplay == false)
+                    {
+                        savablegame = noughtandcrossesarray;
+                        break;
+                    }
+                }
+                else
+                {
+                    fullcount = 0;
+                }
+
+            }
+        }
+        public static void LoadAwin()
+        {
+            Console.WriteLine("You are now in the state of LoadAwin");
+        }
+        public static void SaveAwin()
+        {
+            Console.WriteLine("You are now in the state of SaveAwin");
+            Console.WriteLine("File successfully saved! Returning to main menu... \n");
+        }
+        // Objective 3 & 4
+        public static void PickSymbols(ref int xoro, ref string p1name, ref string p2name, ref char p1play, ref char p2play)
+        {
+            Console.WriteLine("{0}, would you like to be: \n1. X \nOr \n2. O", p1name);
+            bool validinput = false;
+            while (validinput == false)
+            {
+                try
+                {
+                    xoro = int.Parse(Console.ReadLine());
+                    if (xoro == 1)
+                    {
+                        p1play = 'X';
+                        p2play = 'O';
+                        validinput = true;
+                    }
+                    else if (xoro == 2)
+                    {
+                        p1play = 'O';
+                        p2play = 'X';
+                        validinput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input! Enter a valid input please...");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid format! Enter a valid input please...");
+                }
+            }
+        }
+        //Objective 6
+        public static void UpdateGameGrid(ref char[,] noughtandcrossesarray)
+        {
+            Console.WriteLine("The game board looks like this... \n");
+            Console.WriteLine("  1  2  3");
+            Console.WriteLine("1 {0} | {1} | {2}", noughtandcrossesarray[0, 0], noughtandcrossesarray[0, 1], noughtandcrossesarray[0, 2]);
+            Console.WriteLine("  ---------");
+            Console.WriteLine("2 {0} | {1} | {2}", noughtandcrossesarray[1, 0], noughtandcrossesarray[1, 1], noughtandcrossesarray[1, 2]);
+            Console.WriteLine("  ---------");
+            Console.WriteLine("3 {0} | {1} | {2}", noughtandcrossesarray[2, 0], noughtandcrossesarray[2, 1], noughtandcrossesarray[2, 2]);
+        }
+        //objective 7
+        public static void PlaceSymbol(char p1play, ref char[,] noughtandcrossesarray)
+        {
+            // Objective 8
+            bool placetaken = true;
+            while (placetaken)
+            {
+                Console.WriteLine("Enter the row");
+                int rowNumber = int.Parse(Console.ReadLine());
+                Console.WriteLine("Ënter the column");
+                int columnNumber = int.Parse(Console.ReadLine());
+
+                // Objective 8
+                if (noughtandcrossesarray[rowNumber-1, columnNumber - 1] == 'X' || noughtandcrossesarray[rowNumber - 1, columnNumber - 1] == 'O')
+                {
+                    Console.WriteLine("The space is already taken! Try again... \n");
+                }
+                else
+                {
+                    noughtandcrossesarray[rowNumber - 1, columnNumber - 1] = p1play;
+                    placetaken = false;
+                }
+            }
+        }
+        // Checking a win
+        public static void Checkwin(ref char[,] noughtandcrossesarray, char playersymbol, string playername, ref bool win)
+        {
+            if (noughtandcrossesarray[0, 0] == playersymbol && noughtandcrossesarray[0, 1] == playersymbol && noughtandcrossesarray[0, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[1, 0] == playersymbol && noughtandcrossesarray[1, 1] == playersymbol && noughtandcrossesarray[1, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[2, 0] == playersymbol && noughtandcrossesarray[2, 1] == playersymbol && noughtandcrossesarray[2, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[0, 0] == playersymbol && noughtandcrossesarray[1, 0] == playersymbol && noughtandcrossesarray[2, 0] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[0, 1] == playersymbol && noughtandcrossesarray[1, 1] == playersymbol && noughtandcrossesarray[2, 1] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[0, 2] == playersymbol && noughtandcrossesarray[1, 2] == playersymbol && noughtandcrossesarray[2, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[2, 0] == playersymbol && noughtandcrossesarray[1, 1] == playersymbol && noughtandcrossesarray[0, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+            else if (noughtandcrossesarray[0, 0] == playersymbol && noughtandcrossesarray[1, 1] == playersymbol && noughtandcrossesarray[2, 2] == playersymbol)
+            {
+                Console.WriteLine("{0} wins!!", playername);
+                win = false;
+            }
+        }
+        public static void TheGame(string p1name, string p2name, ref char[,] savablegame, ref string filingname)
+        {
+            Console.WriteLine("You must now choose whether to \n1. Play The Game \n2. Load A Win \n3. Save A Win \n4. Play against computer \n");
+            int choice = int.Parse(Console.ReadLine());
+            if (choice == 1)
+            {
+                PlayGame(ref p1name, ref p2name, ref savablegame);
+                Console.WriteLine("game finished \n");
+                TheGame(p1name, p2name, ref savablegame, ref filingname);
+            }
+            else if (choice == 2)
+            {
+                LoadAwin();
+                string text = File.ReadAllText(filingname);
+                Console.WriteLine(text);
+                File.Delete(filingname);
+                TheGame(p1name, p2name, ref savablegame, ref filingname);
+            }
+            else if (choice == 3)
+            {
+                Console.WriteLine("Enter a name for the file");
+                string nameinput = Console.ReadLine();
+                filingname = (nameinput + ".txt");
+                Console.WriteLine("The file name is {0}", filingname);
+                Savingtoexternalfile(ref savablegame, ref filingname);
+                SaveAwin();
+                TheGame(p1name, p2name, ref savablegame, ref filingname);
+            }
+            else if (choice == 4)
+            {
+                p2name = "Computer";
+                Console.WriteLine("Playing against AI... \n");
+                AIgame(ref p1name, ref p2name, ref savablegame);
+                Console.WriteLine("Game finished \n");
+                TheGame(p1name, p2name, ref savablegame, ref filingname);
+            }
+        }
+        // Objective 11
+        public static void Savingtoexternalfile(ref char[,] savablegame, ref string filename)
+        {
+            // saving to file
+            using (StreamWriter SW = new StreamWriter(filename, true))
+            {
+                SW.WriteLine("  1  2  3");
+                SW.WriteLine("1 {0} | {1} | {2}", savablegame[0, 0], savablegame[0, 1], savablegame[0, 2]);
+                SW.WriteLine("  ---------");
+                SW.WriteLine("2 {0} | {1} | {2}", savablegame[1, 0], savablegame[1, 1], savablegame[1, 2]);
+                SW.WriteLine("  ---------");
+                SW.WriteLine("3 {0} | {1} | {2}", savablegame[2, 0], savablegame[2, 1], savablegame[2, 2]);
+            }
+        }
+        // Objective 13
+        public static void AIgame(ref string p1name, ref string p2name, ref char[,] savablegame)
+        {
+            Console.WriteLine("You are now in the state of AI PlayGame");
+            int xoro = 0;
+            char p1play = ' ';
+            char p2play = ' ';
+            PickSymbols(ref xoro, ref p1name, ref p2name, ref p1play, ref p2play);
+            Console.WriteLine("{0} is using {1} and {2} is using {3}", p1name, p1play, p2name, p2play);
+
+            // Objective 5
+            char[,] noughtandcrossesarray = new char[3, 3];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    noughtandcrossesarray[i, j] = ' ';
+                }
+            }
+
+            // Objective 6
+            UpdateGameGrid(ref noughtandcrossesarray);
+            // objective 7
+            bool withinplay = true;
+            while (withinplay == true)
+            {
+                // Player 1 turn
+                Console.WriteLine("\n{0}, it's your turn!", p1name);
+                PlaceSymbol(p1play, ref noughtandcrossesarray);
+                UpdateGameGrid(ref noughtandcrossesarray);
+
+                // Objective 10 - Checking for a win
+                Checkwin(ref noughtandcrossesarray, p1play, p1name, ref withinplay);
+                if (withinplay == false)
+                {
+                    savablegame = noughtandcrossesarray;
+                    break;
+                }
+
+                //Objective 9 -checkfull
+                bool full = false;
+                int fullcount = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        if (noughtandcrossesarray[i, j] == 'X' || noughtandcrossesarray[i, j] == 'O')
+                        {
+                            fullcount++;
+                        }
+                    }
+                }
+                if (fullcount == 9)
+                {
+                    Console.WriteLine("The game is a draw");
+                    withinplay = false;
+                    if (withinplay == false)
+                    {
+                        savablegame = noughtandcrossesarray;
+                        break;
+                    }
+                }
+                else
+                {
+                    fullcount = 0;
+                }
+
+
+                // Computer turn
+                Console.WriteLine("\n{0}, it's your turn!", p2name);
+
+                // randomised computer turn
+                bool placetaken = true;
+                while (placetaken)
+                {
+                    int rowNumber = 0;
+                    int columnNumber = 0;
+                    AIturn(ref rowNumber, ref columnNumber, ref noughtandcrossesarray, p2play, ref placetaken);
+
+
+                    UpdateGameGrid(ref noughtandcrossesarray);
+
+                    //Objective 10 - checking for a win
+                    Checkwin(ref noughtandcrossesarray, p2play, p2name, ref withinplay);
+                    if (withinplay == false)
+                    {
+                        savablegame = noughtandcrossesarray;
+                        break;
+                    }
+
+                    //objective 9 - checkfull
+                    for (int i = 0; i < 3; i++)
+                    {
+                        for (int j = 0; j < 3; j++)
+                        {
+                            if (noughtandcrossesarray[i, j] == 'X' || noughtandcrossesarray[i, j] == 'O')
+                            {
+                                fullcount++;
+                            }
+                        }
+                    }
+                    if (fullcount == 9)
+                    {
+                        Console.WriteLine("The game is a draw");
+                        withinplay = false;
+                        if (withinplay == false)
+                        {
+                            savablegame = noughtandcrossesarray;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        fullcount = 0;
+                    }
+                }
+
+            }
+        }
+        public static void AIturn(ref int rowNumber, ref int columnNumber, ref char[,] noughtandcrossesarray, char p2play, ref bool placetaken)
+        {
+            Random rnd = new Random();
+            int randnum = rnd.Next(1, 4);
+
+            Console.WriteLine("Enter the row \n{0}", randnum);
+            rowNumber = randnum;
+
+            randnum = rnd.Next(1, 4);
+            Console.WriteLine("Ënter the column \n{0}", randnum);
+            columnNumber = randnum;
+
+            if (noughtandcrossesarray[rowNumber - 1, columnNumber - 1] == 'X' || noughtandcrossesarray[rowNumber - 1, columnNumber - 1] == 'O')
+            {
+                Console.WriteLine("The space is already taken! Try again... \n");
+            }
+            else
+            {
+                noughtandcrossesarray[rowNumber - 1, columnNumber - 1] = p2play;
+                placetaken = false;
+            }
+        }
+    }
+}
+
+
 MIT License
 
 Copyright (c) 2024 Tom Arundell
